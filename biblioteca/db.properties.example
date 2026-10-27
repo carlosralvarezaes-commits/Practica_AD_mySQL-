@@ -1,0 +1,5 @@
+# Conexión a la base de datos de la práctica (leída por config.ConexionBD)
+# Cambia usuario y contraseña por los de tu instalación de MySQL.
+db.url=jdbc:mysql://localhost:3306/biblioteca
+db.user=root
+db.password=root

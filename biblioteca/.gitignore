@@ -1,0 +1,5 @@
+target/
+nbproject/private/
+nbactions.xml
+# credenciales locales: se sube db.properties.example
+db.properties
