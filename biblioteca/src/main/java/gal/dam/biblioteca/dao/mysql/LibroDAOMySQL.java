@@ -3,8 +3,10 @@ package gal.dam.biblioteca.dao.mysql;
 import gal.dam.biblioteca.dao.LibroDAO;
 import gal.dam.biblioteca.modelo.Libro;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,21 +22,30 @@ public class LibroDAOMySQL implements LibroDAO {
 
     @Override
     public Optional<Libro> buscarPorId(Connection con, Integer id) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("LibroDAOMySQL.buscarPorId");
+        String consulstaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM Libro WHERE id = ?";
+        try(PreparedStatement ps = con.prepareStatement(consulstaSql)){
+            ps.setInt(1,id);
+            try(ResultSet rs = ps.executeQuery()){
+                return Optional.of(mapear(rs));
+
+            }
+        }
     }
 
     @Override
     public List<Libro> listarTodos(Connection con) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("LibroDAOMySQL.listarTodos");
+        String consultaMySql = "SELECT id, isbn, titulo, anio, ejemplares, id_genero FROM Libro ORDER BY titulo";
+        List<Libro> listaLibros = new ArrayList<>();
+        try(PreparedStatement ps = con.prepareStatement(consultaMySql);
+                ResultSet rs = ps.executeQuery()){
+            while(rs.next()){
+                listaLibros.add(mapear(rs));
+            }
+        }
+        return listaLibros;
     }
 
-    // TODO: consultas específicas
-
-    /** Convierte la fila actual del ResultSet en un Libro. */
     private Libro mapear(ResultSet rs) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("LibroDAOMySQL.mapear");
+        return new Libro(rs.getInt("id"), rs.getString("isbn"),rs.getString("titulo"),rs.getInt("anio"),rs.getInt("ejemplares"),rs.getInt("id_genero"));
     }
 }

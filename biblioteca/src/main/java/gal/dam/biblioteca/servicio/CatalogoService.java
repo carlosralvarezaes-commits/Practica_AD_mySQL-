@@ -52,7 +52,7 @@ public class CatalogoService {
     }
 
     public Optional<Libro> buscarLibro(int id) throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.buscarLibro");
+
     }
 
     public List<Libro> buscarPorTitulo(String texto) throws SQLException {
