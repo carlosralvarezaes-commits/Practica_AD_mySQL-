@@ -62,7 +62,7 @@ public class SocioService {
 
     public List<Libro> librosLeidosDeGenero(int idSocio, int idGenero) throws SQLException {
         try(Connection con = ConexionBD.getConexion()){
-            return libroDAO.prestadosASocioDeGenero(con,idGenero,idGenero);
+            return libroDAO.prestadosASocioDeGenero(con,idSocio,idGenero);
         }
     }
 
