@@ -3,8 +3,11 @@ package gal.dam.biblioteca.dao.mysql;
 import gal.dam.biblioteca.dao.PrestamoDAO;
 import gal.dam.biblioteca.modelo.Prestamo;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,21 +23,36 @@ public class PrestamoDAOMySQL implements PrestamoDAO {
 
     @Override
     public Optional<Prestamo> buscarPorId(Connection con, Integer id) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("PrestamoDAOMySQL.buscarPorId");
+        String consultaSql = "SELECT id, id_socio, id_libro, fecha_prestamo, fecha_limite, fecha_devolucion FROM prestamo WHERE id = ?";
+        try(PreparedStatement ps = con.prepareStatement(consultaSql)){
+            ps.setInt(1,id );
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next()){
+                    return Optional.of(mapear(rs));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<Prestamo> listarTodos(Connection con) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("PrestamoDAOMySQL.listarTodos");
+        String consultaSql = "SELECT id, id_socio, id_libro, fecha_prestamo, fecha_limite, fecha_devolucion FROM prestamo ORDER BY fecha_prestamo ,id";
+        List<Prestamo> listaPrestamos = new ArrayList<>();
+        try(PreparedStatement ps = con.prepareStatement(consultaSql);
+            ResultSet rs = ps.executeQuery()){
+            while(rs.next()){
+                listaPrestamos.add(mapear(rs));
+            }
+        }
+        return listaPrestamos;
     }
 
     // TODO: consultas específicas
 
     /** Convierte la fila actual del ResultSet en un Prestamo. */
     private Prestamo mapear(ResultSet rs) throws SQLException {
-        // TODO
-        throw new UnsupportedOperationException("PrestamoDAOMySQL.mapear");
+        return  new Prestamo(rs.getInt("id"), rs.getInt("id_socio"), rs.getInt("id_libro"),
+         rs.getObject("fecha_prestamo", LocalDate.class), rs.getObject("fecha_limite", LocalDate.class),rs.getObject("fecha_devolucion", LocalDate.class));
     }
 }

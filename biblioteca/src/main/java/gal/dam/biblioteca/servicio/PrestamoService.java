@@ -1,5 +1,6 @@
 package gal.dam.biblioteca.servicio;
 
+import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.LibroDAO;
 import gal.dam.biblioteca.dao.PrestamoDAO;
 import gal.dam.biblioteca.dao.SocioDAO;
@@ -7,6 +8,8 @@ import gal.dam.biblioteca.dto.PrestamoDetalle;
 import gal.dam.biblioteca.dto.PrestamoVencido;
 import gal.dam.biblioteca.dto.ResumenGenero;
 import gal.dam.biblioteca.modelo.Prestamo;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,11 +33,15 @@ public class PrestamoService {
     // ---------- TODO ----------
 
     public List<Prestamo> listarPrestamos() throws SQLException {
-        throw new UnsupportedOperationException("PrestamoService.listarPrestamos");
+        try(Connection  con = ConexionBD.getConexion()){
+            return  prestamoDAO.listarTodos(con);
+        }
     }
 
     public Optional<Prestamo> buscarPrestamo(int id) throws SQLException {
-        throw new UnsupportedOperationException("PrestamoService.buscarPrestamo");
+        try(Connection con = ConexionBD.getConexion()){
+            return prestamoDAO.buscarPorId(con,id );
+        }
     }
 
     public List<Prestamo> activosDeSocio(int idSocio) throws SQLException {
