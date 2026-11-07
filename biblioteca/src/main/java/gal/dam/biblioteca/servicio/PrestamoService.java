@@ -1,5 +1,6 @@
 package gal.dam.biblioteca.servicio;
 
+import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.LibroDAO;
 import gal.dam.biblioteca.dao.PrestamoDAO;
@@ -45,7 +46,9 @@ public class PrestamoService {
     }
 
     public List<Prestamo> activosDeSocio(int idSocio) throws SQLException {
-        throw new UnsupportedOperationException("PrestamoService.activosDeSocio");
+        try(Connection con = ConexionBD.getConexion()){
+            return prestamoDAO.activosDeSocio(con, idSocio);
+        }
     }
 
     public List<PrestamoDetalle> historial(int idSocio) throws SQLException {

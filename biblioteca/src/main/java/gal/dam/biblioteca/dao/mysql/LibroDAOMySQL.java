@@ -108,8 +108,22 @@ public class LibroDAOMySQL implements LibroDAO {
     }
 
     @Override
-    public List<Libro> prestadosASocioDeGenero(Connection con, int idSocio, int idGenero) {
-        return List.of();
+    public List<Libro> prestadosASocioDeGenero(Connection con, int idSocio, int idGenero) throws SQLException {
+        String consultaSql = "SELECT DISTINCT l.id, l.isbn, l.titulo, l.anio, l.ejemplares, l.id_genero" +
+                " FROM libro AS l " +
+                "JOIN prestamo p ON p.id_libro = l.id";
+        List<Libro> listaLibrosLeidos = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setInt(1, idSocio);     // 1.er ?  → p.id_socio
+            ps.setInt(2, idGenero);    // 2.º ?   → l.id_genero
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaLibrosLeidos.add(mapear(rs));
+                }
+            }
+        }
+        return listaLibrosLeidos;
+
     }
 
 

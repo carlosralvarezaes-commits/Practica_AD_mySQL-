@@ -61,7 +61,9 @@ public class SocioService {
     }
 
     public List<Libro> librosLeidosDeGenero(int idSocio, int idGenero) throws SQLException {
-        throw new UnsupportedOperationException("SocioService.librosLeidosDeGenero");
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.prestadosASocioDeGenero(con,idGenero,idGenero);
+        }
     }
 
     public List<Socio> conPrestamosVencidos(LocalDate fechaRef) throws SQLException {
