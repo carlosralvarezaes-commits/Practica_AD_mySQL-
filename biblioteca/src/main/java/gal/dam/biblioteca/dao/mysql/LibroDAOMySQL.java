@@ -71,18 +71,45 @@ public class LibroDAOMySQL implements LibroDAO {
     }
 
     @Override
-    public List<Libro> deAutor(String nombreAutor) throws SQLException {
+    public List<Libro> deAutor(Connection con,String nombreAutor) throws SQLException {
+        String consultaSql = "SELECT l.id, l.isbn, l.titulo , l.anio, l.ejemplares, l.id_genero" +
+                " FROM libro AS l " +
+                "JOIN libro_autor AS la ON l.id = la.id_libro " +
+                "JOIN autor AS a ON la.id_autor = a.id " +
+                "WHERE a.nombre LIKE ? " +
+                "ORDER BY l.titulo";
 
-
-
-
-
-        return null;
+        List<Libro> listaLibrosPorAutor = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setString(1, "%" + nombreAutor + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaLibrosPorAutor.add(mapear(rs));
+                }
+            }
+        }
+        return listaLibrosPorAutor;
     }
 
+
     @Override
-    public List<String> autoresDe(int idLibro) throws SQLException {
-        return List.of();
+    public List<String> autoresDe(Connection con ,int idLibro) throws SQLException {
+        String consultaSql = "SELECT a.nombre " +
+                "FROM autor AS a " +
+                "JOIN libro_autor AS la ON la.id_autor = a.id " +
+                "WHERE la.id_libro = ? " +
+                "ORDER BY a.nombre";
+
+        ArrayList<String> listaLibrosHechosPorAutor = new ArrayList<>();
+        try(PreparedStatement ps = con.prepareStatement(consultaSql)){
+            ps.setInt(1,idLibro);
+            try(ResultSet rs = ps.executeQuery()){
+                while(rs.next()){
+                    listaLibrosHechosPorAutor.add(rs.getString("nombre"));
+                }
+            }
+        }
+        return listaLibrosHechosPorAutor;
     }
 
 

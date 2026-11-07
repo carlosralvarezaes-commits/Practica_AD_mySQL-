@@ -66,11 +66,15 @@ public class CatalogoService {
     }
 
     public List<Libro> librosDeAutor(String nombreAutor) throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.librosDeAutor");
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.deAutor(con , nombreAutor);
+        }
     }
 
     public List<String> autoresDe(int idLibro) throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.autoresDe");
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.autoresDe(con, idLibro);
+        }
     }
 
     public List<Libro> nuncaPrestados() throws SQLException {
