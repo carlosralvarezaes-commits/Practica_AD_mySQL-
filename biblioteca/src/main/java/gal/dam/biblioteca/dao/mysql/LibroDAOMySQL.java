@@ -22,8 +22,8 @@ public class LibroDAOMySQL implements LibroDAO {
 
     @Override
     public Optional<Libro> buscarPorId(Connection con, Integer id) throws SQLException {
-        String consulstaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM Libro WHERE id = ?";
-        try(PreparedStatement ps = con.prepareStatement(consulstaSql)){
+        String consultaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM libro WHERE id = ?";
+        try(PreparedStatement ps = con.prepareStatement(consultaSql)){
             ps.setInt(1,id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -36,7 +36,7 @@ public class LibroDAOMySQL implements LibroDAO {
 
     @Override
     public List<Libro> listarTodos(Connection con) throws SQLException {
-        String consultaMySql = "SELECT id, isbn, titulo, anio, ejemplares, id_genero FROM Libro ORDER BY titulo";
+        String consultaMySql = "SELECT id, isbn, titulo, anio, ejemplares, id_genero FROM libro ORDER BY titulo";
         List<Libro> listaLibros = new ArrayList<>();
         try(PreparedStatement ps = con.prepareStatement(consultaMySql);
                 ResultSet rs = ps.executeQuery()){

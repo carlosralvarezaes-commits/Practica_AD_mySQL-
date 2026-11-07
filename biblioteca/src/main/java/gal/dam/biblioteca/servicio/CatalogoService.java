@@ -1,10 +1,8 @@
 package gal.dam.biblioteca.servicio;
 
-import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.DAO;
 import gal.dam.biblioteca.dao.LibroDAO;
-import gal.dam.biblioteca.dao.mysql.LibroDAOMySQL;
 import gal.dam.biblioteca.dto.LibroDisponible;
 import gal.dam.biblioteca.dto.LibroPrestamos;
 import gal.dam.biblioteca.modelo.Genero;
