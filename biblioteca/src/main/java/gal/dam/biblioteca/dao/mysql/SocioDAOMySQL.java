@@ -86,12 +86,42 @@ public class SocioDAOMySQL implements SocioDAO {
             }
         }
         return Optional.empty();
-
     }
-
 
     @Override
-    public List<Libro> prestadosASocioDeGenero(int idSocio, int idGenero) throws SQLException {
-        return List.of();
+    public List<Socio> conPrestamosVencidos(Connection con, LocalDate fechaRef) throws SQLException {
+        String consultaSql = "SELECT DISTINCT s.id, s.nombre, s.apellidos, s.email, s.tipo, s.fecha_alta " +
+                "FROM socio s " +
+                "JOIN prestamo p ON p.id_socio = s.id " +
+                "WHERE p.fecha_devolucion IS NULL AND p.fecha_limite < ? " +
+                "ORDER BY s.apellidos";
+        List<Socio> listaSociosVencidos = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setObject(1, fechaRef);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaSociosVencidos.add(mapear(rs));
+                }
+            }
+        }
+        return listaSociosVencidos;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+

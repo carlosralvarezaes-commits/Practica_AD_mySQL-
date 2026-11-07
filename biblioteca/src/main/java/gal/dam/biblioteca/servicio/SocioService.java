@@ -67,7 +67,9 @@ public class SocioService {
     }
 
     public List<Socio> conPrestamosVencidos(LocalDate fechaRef) throws SQLException {
-        throw new UnsupportedOperationException("SocioService.conPrestamosVencidos");
+        try (Connection con = ConexionBD.getConexion()) {
+            return socioDAO.conPrestamosVencidos(con, fechaRef);
+        }
     }
 
     public List<Socio> lectoresDeTodoElAutor(int idAutor) throws SQLException {
