@@ -1,11 +1,14 @@
 package gal.dam.biblioteca.servicio;
 
+import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.LibroDAO;
 import gal.dam.biblioteca.dao.PrestamoDAO;
 import gal.dam.biblioteca.dao.SocioDAO;
 import gal.dam.biblioteca.dto.FichaSocio;
 import gal.dam.biblioteca.modelo.Libro;
 import gal.dam.biblioteca.modelo.Socio;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,11 +35,15 @@ public class SocioService {
     // ---------- TODO ----------
 
     public List<Socio> listarSocios() throws SQLException {
-        throw new UnsupportedOperationException("SocioService.listarSocios");
+        try(Connection con = ConexionBD.getConexion()){
+            return  socioDAO.listarTodos(con);
+        }
     }
 
     public Optional<Socio> buscarSocio(int id) throws SQLException {
-        throw new UnsupportedOperationException("SocioService.buscarSocio");
+        try(Connection con = ConexionBD.getConexion()){
+            return socioDAO.buscarPorId(con, id );
+        }
     }
 
     public Optional<Socio> buscarPorEmail(String email) throws SQLException {
