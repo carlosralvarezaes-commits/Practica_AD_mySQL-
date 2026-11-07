@@ -47,7 +47,9 @@ public class SocioService {
     }
 
     public Optional<Socio> buscarPorEmail(String email) throws SQLException {
-        throw new UnsupportedOperationException("SocioService.buscarPorEmail");
+        try (Connection con = ConexionBD.getConexion()) {
+            return socioDAO.buscarPorEmail(con, email);
+        }
     }
 
     /**

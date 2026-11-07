@@ -19,11 +19,6 @@ import java.util.Optional;
  * (la cierra quien la abrió: el servicio). Cada fila se convierte en objeto con mapear().
  */
 public class LibroDAOMySQL implements LibroDAO {
-
-
-
-
-
     @Override
     public Optional<Libro> buscarPorId(Connection con, Integer id) throws SQLException {
         String consultaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM libro WHERE id = ?";
@@ -110,6 +105,11 @@ public class LibroDAOMySQL implements LibroDAO {
             }
         }
         return listaLibrosHechosPorAutor;
+    }
+
+    @Override
+    public List<Libro> prestadosASocioDeGenero(Connection con, int idSocio, int idGenero) {
+        return List.of();
     }
 
 

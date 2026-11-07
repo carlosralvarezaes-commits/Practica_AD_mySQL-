@@ -2,6 +2,10 @@ package gal.dam.biblioteca.dao;
 
 import gal.dam.biblioteca.modelo.Prestamo;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
 /**
  * DAO de la tabla prestamo.
  * <p>
@@ -11,5 +15,6 @@ import gal.dam.biblioteca.modelo.Prestamo;
  * este DAO. Todas reciben la Connection como primer parámetro y lanzan SQLException.
  */
 public interface PrestamoDAO extends DAO<Prestamo,Integer>{
+    List<Prestamo> activosDeSocio(Connection con,int idSocio) throws SQLException;
 
 }

@@ -65,4 +65,23 @@ public class PrestamoDAOMySQL implements PrestamoDAO {
         return  new Prestamo(rs.getInt("id"), rs.getInt("id_socio"), rs.getInt("id_libro"),
          rs.getObject("fecha_prestamo", LocalDate.class), rs.getObject("fecha_limite", LocalDate.class),rs.getObject("fecha_devolucion", LocalDate.class));
     }
+
+    @Override
+    public List<Prestamo> activosDeSocio(Connection con , int idSocio) throws SQLException {
+        String consultaSql = "SELECT id, id_socio, id_libro, fecha_prestamo, fecha_limite, fecha_devolucion "+
+                "FROM prestamo "+
+                "WHERE id_socio = ? AND fecha_devolucion IS NULL " +
+                "ORDER BY fecha_prestamo";
+        List<Prestamo> listaPrestamosActivos = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setInt(1, idSocio);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaPrestamosActivos.add(mapear(rs));
+                }
+            }
+        }
+        return listaPrestamosActivos;
+    }
+
 }

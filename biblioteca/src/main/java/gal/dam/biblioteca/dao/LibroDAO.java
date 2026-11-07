@@ -18,7 +18,7 @@ public interface LibroDAO extends DAO<Libro, Integer> {
     List<Libro> buscarPorTitulo(Connection con, String texto) throws SQLException;
     List<Libro> deAutor(Connection con , String nombreAutor) throws SQLException;
     List<String> autoresDe(Connection con ,int idLibro) throws SQLException;
-
+    List<Libro> prestadosASocioDeGenero(Connection con ,int idSocio, int idGenero);
 
 
 }

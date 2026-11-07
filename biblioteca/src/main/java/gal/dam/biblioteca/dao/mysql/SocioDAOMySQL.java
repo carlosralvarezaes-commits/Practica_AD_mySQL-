@@ -1,6 +1,8 @@
 package gal.dam.biblioteca.dao.mysql;
 
 import gal.dam.biblioteca.dao.SocioDAO;
+import gal.dam.biblioteca.modelo.Libro;
+import gal.dam.biblioteca.modelo.Prestamo;
 import gal.dam.biblioteca.modelo.Socio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,5 +72,26 @@ public class SocioDAOMySQL implements SocioDAO {
                 rs.getObject("fecha_alta",LocalDate.class)
         );
 
+    }
+
+    @Override
+    public Optional<Socio> buscarPorEmail(Connection con, String email) throws SQLException {
+        String consultaSql = "SELECT id, nombre, apellidos, email, tipo, fecha_alta FROM socio WHERE email = ? ORDER BY apellidos";
+        try(PreparedStatement ps = con.prepareStatement(consultaSql)){
+            ps.setString(1,email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapear(rs));
+                }
+            }
+        }
+        return Optional.empty();
+
+    }
+
+
+    @Override
+    public List<Libro> prestadosASocioDeGenero(int idSocio, int idGenero) throws SQLException {
+        return List.of();
     }
 }
