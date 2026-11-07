@@ -1,6 +1,5 @@
 package gal.dam.biblioteca.servicio;
 
-import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.LibroDAO;
 import gal.dam.biblioteca.dao.PrestamoDAO;

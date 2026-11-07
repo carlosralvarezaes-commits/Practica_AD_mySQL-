@@ -111,7 +111,9 @@ public class LibroDAOMySQL implements LibroDAO {
     public List<Libro> prestadosASocioDeGenero(Connection con, int idSocio, int idGenero) throws SQLException {
         String consultaSql = "SELECT DISTINCT l.id, l.isbn, l.titulo, l.anio, l.ejemplares, l.id_genero" +
                 " FROM libro AS l " +
-                "JOIN prestamo p ON p.id_libro = l.id";
+                "JOIN prestamo p ON p.id_libro = l.id " +
+                "WHERE p.id_socio = ? AND l.id_genero = ? " +
+                "ORDER BY l.titulo";
         List<Libro> listaLibrosLeidos = new ArrayList<>();
         try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
             ps.setInt(1, idSocio);     // 1.er ?  → p.id_socio
