@@ -128,6 +128,22 @@ public class LibroDAOMySQL implements LibroDAO {
 
     }
 
+    @Override
+    public List<Libro> nuncaPrestados(Connection con) throws SQLException {
+        String consultaSql="SELECT l.id, l.isbn, l.titulo , l.anio, l.ejemplares, l.id_genero " +
+                "FROM libro AS l " +
+                "WHERE NOT EXISTS (SELECT 1 FROM prestamo AS p WHERE p.id_libro = l.id) " +
+                "ORDER BY l.titulo";
+        List<Libro> listaNuncaPrestados = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                listaNuncaPrestados.add(mapear(rs));
+            }
+        }
+        return listaNuncaPrestados;
+    }
+
 
     // TODO: Mapear
 

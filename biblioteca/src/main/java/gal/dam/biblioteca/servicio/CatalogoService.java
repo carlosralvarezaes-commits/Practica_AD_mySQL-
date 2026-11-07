@@ -78,7 +78,9 @@ public class CatalogoService {
     }
 
     public List<Libro> nuncaPrestados() throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.nuncaPrestados");
+        try (Connection con = ConexionBD.getConexion()) {
+            return libroDAO.nuncaPrestados(con);
+        }
     }
 
     public List<LibroDisponible> disponibilidad() throws SQLException {
