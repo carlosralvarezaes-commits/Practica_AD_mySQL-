@@ -1,6 +1,8 @@
 package gal.dam.biblioteca.dao.mysql;
 
 import gal.dam.biblioteca.dao.LibroDAO;
+import gal.dam.biblioteca.dto.LibroDisponible;
+import gal.dam.biblioteca.dto.LibroPrestamos;
 import gal.dam.biblioteca.modelo.Libro;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -145,8 +147,69 @@ public class LibroDAOMySQL implements LibroDAO {
     }
 
 
-    // TODO: Mapear
+    @Override
+    public List<LibroDisponible> disponibilidad(Connection con) throws SQLException {
+        String consultaSql = "SELECT l.id, l.titulo, l.ejemplares, " +
+                "COUNT(p.id) AS prestados, " +
+                "l.ejemplares - COUNT(p.id) AS disponibles " +
+                "FROM libro l " +
+                "LEFT JOIN prestamo p ON p.id_libro = l.id AND p.fecha_devolucion IS NULL " +
+                "GROUP BY l.id, l.titulo, l.ejemplares " +
+                "ORDER BY disponibles, l.titulo";
+        List<LibroDisponible> listaDisponibilidad = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                listaDisponibilidad.add(mapearDisponible(rs));
+            }
+        }
+        return listaDisponibilidad;
+    }
 
+    @Override
+    public List<LibroPrestamos> masPrestadoPorGenero(Connection con) throws SQLException {
+        String consultaSql = "SELECT g.nombre AS genero, l.titulo, COUNT(*) AS prestamos " +
+                "FROM libro l " +
+                "JOIN genero g ON g.id = l.id_genero " +
+                "JOIN prestamo p ON p.id_libro = l.id " +
+                "GROUP BY l.id, l.titulo, l.id_genero, g.nombre " +
+                "HAVING COUNT(*) >= ALL (" +
+                "    SELECT COUNT(*) FROM libro l2 " +
+                "    JOIN prestamo p2 ON p2.id_libro = l2.id " +
+                "    WHERE l2.id_genero = l.id_genero " +
+                "    GROUP BY l2.id) " +
+                "ORDER BY g.nombre, l.titulo";
+        List<LibroPrestamos> listaMasPrestados = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                listaMasPrestados.add(mapearLibroPrestamos(rs));
+            }
+        }
+        return listaMasPrestados;
+    }
+
+
+
+    private LibroDisponible mapearDisponible(ResultSet rs) throws SQLException {
+        return new LibroDisponible(
+                rs.getInt("id"),
+                rs.getString("titulo"),
+                rs.getInt("ejemplares"),
+                rs.getInt("prestados"),
+                rs.getInt("disponibles"));
+    }
+
+
+
+    private LibroPrestamos mapearLibroPrestamos(ResultSet rs) throws SQLException {
+        return new LibroPrestamos(
+                rs.getString("genero"),
+                rs.getString("titulo"),
+                rs.getInt("prestamos"));
+    }
+
+    // TODO: Mapear
     private Libro mapear(ResultSet rs) throws SQLException {
         return new Libro(rs.getInt("id"), rs.getString("isbn"),rs.getString("titulo"),rs.getInt("anio"),rs.getInt("ejemplares"),rs.getInt("id_genero"));
     }

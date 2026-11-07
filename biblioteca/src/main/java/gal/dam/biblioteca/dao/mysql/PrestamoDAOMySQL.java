@@ -1,6 +1,8 @@
 package gal.dam.biblioteca.dao.mysql;
 
 import gal.dam.biblioteca.dao.PrestamoDAO;
+import gal.dam.biblioteca.dto.PrestamoDetalle;
+import gal.dam.biblioteca.dto.PrestamoVencido;
 import gal.dam.biblioteca.modelo.Prestamo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,18 +51,7 @@ public class PrestamoDAOMySQL implements PrestamoDAO {
     }
 
     // TODO: consultas específicas
-
-
-
-
-
-
-
-
-
     // TODO: Mapear
-
-    /** Convierte la fila actual del ResultSet en un Prestamo. */
     private Prestamo mapear(ResultSet rs) throws SQLException {
         return  new Prestamo(rs.getInt("id"), rs.getInt("id_socio"), rs.getInt("id_libro"),
          rs.getObject("fecha_prestamo", LocalDate.class), rs.getObject("fecha_limite", LocalDate.class),rs.getObject("fecha_devolucion", LocalDate.class));
@@ -83,5 +74,74 @@ public class PrestamoDAOMySQL implements PrestamoDAO {
         }
         return listaPrestamosActivos;
     }
+
+
+    @Override
+    public List<PrestamoDetalle> historial(Connection con, int idSocio) throws SQLException {
+        String consultaSql = "SELECT p.id, l.titulo, " +
+                "GROUP_CONCAT(a.nombre ORDER BY a.nombre SEPARATOR ', ') AS autores, " +
+                "p.fecha_prestamo, p.fecha_limite, p.fecha_devolucion " +
+                "FROM prestamo p " +
+                "JOIN libro l ON l.id = p.id_libro " +
+                "JOIN libro_autor la ON la.id_libro = l.id " +
+                "JOIN autor a ON a.id = la.id_autor " +
+                "WHERE p.id_socio = ? " +
+                "GROUP BY p.id, l.titulo " +
+                "ORDER BY p.fecha_prestamo";
+        List<PrestamoDetalle> listaHistorial = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setInt(1, idSocio);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaHistorial.add(mapearDetalle(rs));
+                }
+            }
+        }
+        return listaHistorial;
+    }
+
+    @Override
+    public List<PrestamoVencido> vencidos(Connection con, LocalDate fechaRef) throws SQLException {
+        String consultaSql = "SELECT p.id, CONCAT(s.nombre, ' ', s.apellidos) AS socio, l.titulo, " +
+                "p.fecha_limite, DATEDIFF(?, p.fecha_limite) AS dias_retraso " +
+                "FROM prestamo p " +
+                "JOIN socio s ON s.id = p.id_socio " +
+                "JOIN libro l ON l.id = p.id_libro " +
+                "WHERE p.fecha_devolucion IS NULL AND p.fecha_limite < ? " +
+                "ORDER BY dias_retraso DESC";
+        List<PrestamoVencido> listaVencidos = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(consultaSql)) {
+            ps.setObject(1, fechaRef);   // ? del DATEDIFF
+            ps.setObject(2, fechaRef);   // ? del WHERE
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaVencidos.add(mapearVencido(rs));
+                }
+            }
+        }
+        return listaVencidos;
+    }
+
+    private PrestamoDetalle mapearDetalle(ResultSet rs) throws SQLException {
+        return new PrestamoDetalle(
+                rs.getInt("id"),
+                rs.getString("titulo"),
+                rs.getString("autores"),
+                rs.getObject("fecha_prestamo", LocalDate.class),
+                rs.getObject("fecha_limite", LocalDate.class),
+                rs.getObject("fecha_devolucion", LocalDate.class));
+    }
+
+    private PrestamoVencido mapearVencido(ResultSet rs) throws SQLException {
+        return new PrestamoVencido(
+                rs.getInt("id"),
+                rs.getString("socio"),
+                rs.getString("titulo"),
+                rs.getObject("fecha_limite", LocalDate.class),
+                rs.getInt("dias_retraso"));
+    }
+
+
+
 
 }

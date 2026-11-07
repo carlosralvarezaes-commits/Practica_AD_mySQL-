@@ -21,7 +21,7 @@ import java.util.Optional;
 public interface SocioDAO extends DAO<Socio, Integer> {
     Optional<Socio> buscarPorEmail(Connection con,String email) throws SQLException;
     List<Socio> conPrestamosVencidos(Connection con, LocalDate fechaRef) throws SQLException;
-
+    List<Socio> lectoresDeTodoElAutor(Connection con, int idAutor) throws SQLException;
 
 
 

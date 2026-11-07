@@ -73,7 +73,9 @@ public class SocioService {
     }
 
     public List<Socio> lectoresDeTodoElAutor(int idAutor) throws SQLException {
-        throw new UnsupportedOperationException("SocioService.lectoresDeTodoElAutor");
+        try (Connection con = ConexionBD.getConexion()) {
+            return socioDAO.lectoresDeTodoElAutor(con, idAutor);
+        }
     }
 
     public List<Socio> lectoresSobreLaMedia() throws SQLException {
