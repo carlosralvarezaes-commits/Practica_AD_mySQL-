@@ -60,7 +60,9 @@ public class CatalogoService {
     }
 
     public List<Libro> buscarPorTitulo(String texto) throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.buscarPorTitulo");
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.buscarPorTitulo(con,texto);
+        }
     }
 
     public List<Libro> librosDeAutor(String nombreAutor) throws SQLException {

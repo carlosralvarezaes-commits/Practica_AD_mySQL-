@@ -53,6 +53,12 @@ public class SocioDAOMySQL implements SocioDAO {
 
     // TODO: consultas específicas
 
+
+
+
+
+
+    // TODO: Mapear
     /** Convierte la fila actual del ResultSet en un Socio. */
     private Socio mapear(ResultSet rs) throws SQLException {
         return new Socio(

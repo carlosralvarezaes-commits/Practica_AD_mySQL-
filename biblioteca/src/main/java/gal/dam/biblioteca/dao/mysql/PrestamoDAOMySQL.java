@@ -50,6 +50,16 @@ public class PrestamoDAOMySQL implements PrestamoDAO {
 
     // TODO: consultas específicas
 
+
+
+
+
+
+
+
+
+    // TODO: Mapear
+
     /** Convierte la fila actual del ResultSet en un Prestamo. */
     private Prestamo mapear(ResultSet rs) throws SQLException {
         return  new Prestamo(rs.getInt("id"), rs.getInt("id_socio"), rs.getInt("id_libro"),

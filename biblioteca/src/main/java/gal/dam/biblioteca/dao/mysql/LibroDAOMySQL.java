@@ -20,6 +20,10 @@ import java.util.Optional;
  */
 public class LibroDAOMySQL implements LibroDAO {
 
+
+
+
+
     @Override
     public Optional<Libro> buscarPorId(Connection con, Integer id) throws SQLException {
         String consultaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM libro WHERE id = ?";
@@ -47,7 +51,45 @@ public class LibroDAOMySQL implements LibroDAO {
         return listaLibros;
     }
 
+    // TODO: consultas especificas
+
+    @Override
+    public List<Libro> buscarPorTitulo(Connection con, String texto) throws SQLException {
+        String consultaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM libro WHERE titulo LIKE ? ORDER BY titulo";
+        List<Libro > listaLibrosPorTitulo = new ArrayList<>();
+        try(PreparedStatement ps = con.prepareStatement(consultaSql)){
+
+            ps.setString(1,"%"+texto+"%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    listaLibrosPorTitulo.add(mapear(rs));
+                }
+            }
+        }
+        return listaLibrosPorTitulo;
+    }
+
+    @Override
+    public List<Libro> deAutor(String nombreAutor) throws SQLException {
+
+
+
+
+
+        return null;
+    }
+
+    @Override
+    public List<String> autoresDe(int idLibro) throws SQLException {
+        return List.of();
+    }
+
+
+    // TODO: Mapear
+
     private Libro mapear(ResultSet rs) throws SQLException {
         return new Libro(rs.getInt("id"), rs.getString("isbn"),rs.getString("titulo"),rs.getInt("anio"),rs.getInt("ejemplares"),rs.getInt("id_genero"));
     }
+
 }
