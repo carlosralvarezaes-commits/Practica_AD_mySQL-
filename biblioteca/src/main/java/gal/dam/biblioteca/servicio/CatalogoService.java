@@ -1,14 +1,16 @@
 package gal.dam.biblioteca.servicio;
 
+import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import gal.dam.biblioteca.config.ConexionBD;
 import gal.dam.biblioteca.dao.DAO;
 import gal.dam.biblioteca.dao.LibroDAO;
+import gal.dam.biblioteca.dao.mysql.LibroDAOMySQL;
 import gal.dam.biblioteca.dto.LibroDisponible;
 import gal.dam.biblioteca.dto.LibroPrestamos;
 import gal.dam.biblioteca.modelo.Genero;
 import gal.dam.biblioteca.modelo.Libro;
-import java.sql.Connection;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,11 +50,15 @@ public class CatalogoService {
     // ---------- TODO ----------
 
     public List<Libro> listarLibros() throws SQLException {
-        throw new UnsupportedOperationException("CatalogoService.listarLibros");
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.listarTodos(con);
+        }
     }
 
     public Optional<Libro> buscarLibro(int id) throws SQLException {
-
+        try(Connection con = ConexionBD.getConexion()){
+            return libroDAO.buscarPorId(con, id);
+        }
     }
 
     public List<Libro> buscarPorTitulo(String texto) throws SQLException {

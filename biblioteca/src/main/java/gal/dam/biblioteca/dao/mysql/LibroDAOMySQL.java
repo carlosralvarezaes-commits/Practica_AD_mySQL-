@@ -25,11 +25,13 @@ public class LibroDAOMySQL implements LibroDAO {
         String consulstaSql = "SELECT id,isbn,titulo, anio, ejemplares, id_genero FROM Libro WHERE id = ?";
         try(PreparedStatement ps = con.prepareStatement(consulstaSql)){
             ps.setInt(1,id);
-            try(ResultSet rs = ps.executeQuery()){
-                return Optional.of(mapear(rs));
-
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapear(rs));
+                }
             }
         }
+        return Optional.empty();
     }
 
     @Override
